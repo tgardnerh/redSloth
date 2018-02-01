@@ -24,12 +24,14 @@ d <- as.data.frame(cbind(yc, xc, h))
 ```
 
 #Scatter plot of y as the square of a chi-squared random variable
-
 ```{r echo=FALSE, fig.width = 8, fig.height=8}
 ggplot(aes(x = xc, y = yc, size=h), data=d) + geom_point()
 
 ```
 
+#Notes:
+1. See that the cluster of points at the left are all small--because each individual point carries comparatively little information about the fit line, they have low leverage.
+2. By contrast, the points out to the right are sparse, and thus large. The location of these points greatly affects the slope of the best fit line.
 
 ```{r include = FALSE, cache = TRUE}
 rm(list=ls())
