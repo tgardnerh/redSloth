@@ -1,0 +1,186 @@
+---
+title: "Problem Set 2"
+output:
+  html_document:
+    df_print: paged
+---
+
+#Programing Exercise from Hansen
+
+###set up data
+```{r}
+ 
+library(haven)
+dat2 <- read_dta("http://www.ssc.wisc.edu/~bhansen/econometrics/cps09mar.dta")
+dat <- dat2
+dat$ln_wage <- log(dat$earnings/(dat$hours*dat$week))
+dat$experience <-dat$age - dat$education - 6
+dat$exp_sq <- (dat$experience ^2) /100
+#maried black femal flag
+mbf <- (dat[,11]==2)&(dat[,12]<=2)&(dat[,2]==1)&(dat$experience==12) 
+#single asian male flag
+sam <- (dat[,11]==4)&(dat[,12]==7)&(dat[,2]==0)
+```
+
+###calculate regression influence
+```{r}
+
+reg <- lm(ln_wage~education +experience + exp_sq ,data = dat, subset = sam )
+reg
+leverage <- hatvalues(reg)
+e <- resid(reg)
+r <- e/(1-leverage)
+d <- leverage*e/(1-leverage)
+print(max(abs(d)))
+```
+
+#Simulation
+###Set up DGP for each distribution
+```{r}
+rm(list = ls())
+#Build function to run simulation
+simulation_norm <- function( n) {
+  x <-rnorm(n, mean = 0 , 1)
+  df= data.frame(x)
+  df$e <- rnorm(n, mean = 0, 1)
+  df$y <- df$x^2+df$e
+
+  reg <- lm(df$y ~ df$x)
+  return(coef(reg)[1])
+}
+
+simulation_uniform <- function( n) {
+  x <-runif(n, 0 , 1)
+  df= data.frame(x)
+  df$e <- rnorm(n, mean = 0, 1)
+  df$y <- df$x^2+df$e
+
+  reg <- lm(df$y ~ df$x)
+  return(coef(reg)[1])
+}
+
+simulation_chi <- function( n) {
+  x <-rchisq(n, 1)
+  df= data.frame(x)
+  df$e <- rnorm(n, mean = 0, 1)
+  df$y <- df$x^2+df$e
+
+  reg <- lm(df$y ~ df$x)
+  return(coef(reg)[1])
+}
+```
+
+
+
+##Simulations with 10, 100, 1000, and 100,000 observations:
+We will take the 100,000 observation simulation as the true value
+###For normal:
+```{r}
+#inialize results list
+sim_result <- c()
+for (i in seq(10000)){
+  sim_result <- c(sim_result, simulation_norm(10))
+}
+#Normal 10
+summary(sim_result)
+#inialize results list
+sim_result <- c()
+for (i in seq(1000)){
+  sim_result <- c(sim_result, simulation_norm(100))
+}
+#Normal 100
+
+summary(sim_result)
+#inialize results list
+sim_result <- c()
+for (i in seq(1000)){
+  sim_result <- c(sim_result, simulation_norm(1000))
+}
+#Normal 1000
+summary(sim_result)
+#inialize results list
+sim_result <- c()
+for (i in seq(100)){
+  sim_result <- c(sim_result, simulation_norm(100000))
+}
+#Normal 100000
+summary(sim_result)
+```
+Here, we see very clear bias
+
+###For Uniform:
+```{r}
+#inialize results list
+sim_result <- c()
+for (i in seq(10000)){
+  sim_result <- c(sim_result, simulation_uniform(10))
+}
+
+#Uniform, 10:
+summary(sim_result)
+#inialize results list
+sim_result <- c()
+for (i in seq(1000)){
+  sim_result <- c(sim_result, simulation_uniform(100))
+}
+
+#Uniform, 100:
+summary(sim_result)
+#inialize results list
+sim_result <- c()
+for (i in seq(10000)){
+  sim_result <- c(sim_result, simulation_uniform(1000))
+}
+
+#Uniform, 1000:
+summary(sim_result)
+
+#inialize results list
+sim_result <- c()
+for (i in seq(100)){
+  sim_result <- c(sim_result, simulation_uniform(100000))
+}
+
+#Uniform, 1000:
+summary(sim_result)
+```
+There appears to be bias here, but it is much less profound.
+
+##Chi Square
+```{r}
+#inialize results list
+sim_result <- c()
+for (i in seq(10000)){
+  sim_result <- c(sim_result, simulation_chi(10))
+}
+
+#Chi Square, 10:
+summary(sim_result)
+#inialize results list
+sim_result <- c()
+for (i in seq(1000)){
+  sim_result <- c(sim_result, simulation_chi(100))
+}
+
+#Chi Square, 100:
+summary(sim_result)
+#inialize results list
+sim_result <- c()
+for (i in seq(10000)){
+  sim_result <- c(sim_result, simulation_chi(1000))
+}
+
+#Chi Square, 1000:
+summary(sim_result)
+
+#inialize results list
+sim_result <- c()
+for (i in seq(100)){
+  sim_result <- c(sim_result, simulation_chi(100000))
+}
+
+#Chi Square, 100,000:
+summary(sim_result)
+```
+Definitely some  bias here
+
