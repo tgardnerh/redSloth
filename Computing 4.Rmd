@@ -13,12 +13,13 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Augustin-Louis Cauchy
 
-```{r  echo = FALSE}
+```{r  echo = FALSE, cache=TRUE}
 rm(list=ls())
 #library(broom)
 #library(dplyr)
 #library(tidyverse)
 #library(magrittr)
+
 
 set.seed(42069)
 
@@ -115,6 +116,14 @@ result_mean <- aggregate(results, FUN = mean, by = list(results$constant))
 result_sd <- aggregate(results, FUN = sd, by = list(results$constant))
 
 stats <- rbind(result_mean, result_sd)
+
+```
+#results table
+
+```{r results = "asis", echo=FALSE}
+library(stargazer)
+
+stargazer(stats,header=FALSE, summary = FALSE)
 
 ```
 
