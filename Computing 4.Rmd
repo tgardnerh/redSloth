@@ -124,3 +124,10 @@ result_sd <- aggregate(results, FUN = sd, by = list(results$constant))
 
 stats <- rbind(result_mean, result_sd)
 ```
+
+## Slide with Plot
+
+```{r pressure}
+plot(pressure)
+```
+
