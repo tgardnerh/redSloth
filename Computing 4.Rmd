@@ -116,9 +116,36 @@ result_mean <- aggregate(results, FUN = mean, by = list(results$constant))
 result_sd <- aggregate(results, FUN = sd, by = list(results$constant))
 
 stats <- rbind(result_mean, result_sd)
-
 ```
-#results table
+
+```{r  echo = FALSE, cache=TRUE}
+
+#Alternate approach
+cauchy_alt <- cbind()
+normal_alt <- cbind()
+number <- cbind()
+
+for (i in seq(1000)){
+  
+  reg <- lm(simulation$yc ~ simulation$x, subset = simulation$random_order <= i)
+  cauchy_alt <- rbind(cauchy_alt,coef(reg)[2])
+  
+  reg <- lm(simulation$yn ~ simulation$x, subset = simulation$random_order <= i)
+  normal_alt <- rbind(normal_alt,coef(reg)[2])
+  
+  number <-rbind(number, i)
+  
+  alt_results <- data.frame(cauchy_alt, normal_alt, number)
+}
+```
+##Cauchy
+```{r}
+plot(number, cauchy_alt )
+```
+##Normal
+```{r}
+plot(number, normal_alt )
+```
 
 ```{r results = "asis", echo=FALSE}
 library(stargazer)
