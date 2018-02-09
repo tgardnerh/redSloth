@@ -23,7 +23,7 @@ rm(list=ls())
 
 set.seed(42069)
 
-n=100000
+n=10000
 
 
 x <- rnorm(n)
@@ -56,6 +56,7 @@ simulation <- data.frame(x,yn,yc,en,ec)
 
   
   for (i in seq(100)){
+    
     
       simulation$random_order <- order(runif(n= n))
 
@@ -118,7 +119,7 @@ result_sd <- aggregate(results, FUN = sd, by = list(results$constant))
 stats <- rbind(result_mean, result_sd)
 ```
 
-```{r  echo = FALSE, cache=TRUE}
+```{r  include=  FALSE, cache=TRUE}
 
 #Alternate approach
 cauchy_alt <- cbind()
@@ -138,13 +139,15 @@ for (i in seq(1000)){
   alt_results <- data.frame(cauchy_alt, normal_alt, number)
 }
 ```
-##Cauchy
+#Cauchy
 ```{r}
 plot(number, cauchy_alt )
 ```
-##Normal
+
+
+#Normal
 ```{r}
-plot(number, normal_alt )
+ggplot(number, normal_alt )
 ```
 
 ##results table
