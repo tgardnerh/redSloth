@@ -1,0 +1,140 @@
+---
+title: "Computing 4"
+author: "Hoppenfeld"
+date: "2/8/2018"
+output:
+  slidy_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+## Augustin-Louis Cauchy
+
+```{r  include = FALSE, cache=TRUE}
+rm(list=ls())
+#library(broom)
+#library(dplyr)
+#library(tidyverse)
+#library(magrittr)
+
+
+set.seed(42069)
+
+n=100000
+
+
+x <- rnorm(n)
+
+en <- rnorm(n)
+ec <- rcauchy(n)
+
+
+yn <- 0.8 + 0.3*x + en
+yc <- 0.8 +0.3*x + ec
+
+simulation <- data.frame(x,yn,yc,en,ec)
+
+
+#simulations
+
+  cauchy_001 <- cbind()
+  cauchy_01 <- cbind()
+  cauchy_1 <- cbind()
+  cauchy_10 <- cbind()
+  cauchy_100 <- cbind()
+
+  normal_001 <- cbind()
+  normal_01 <- cbind()
+  normal_1 <- cbind()
+  normal_10 <- cbind()
+  normal_100 <- cbind()
+  
+  constant <- cbind()
+
+  
+  for (i in seq(100)){
+    
+      simulation$random_order <- order(runif(n= n))
+
+   reg <- lm(simulation$yc ~ simulation$x, subset = simulation$random_order <= 10)
+  result <- coef(reg)[2]
+  cauchy_001 <- rbind(cauchy_001 , result)
+
+  reg <- lm(simulation$yc ~ simulation$x, subset = simulation$random_order <= 100)
+  result <- coef(reg)[2]
+  cauchy_01 <- rbind(cauchy_01 , result)
+  
+  reg <- lm(simulation$yc ~ simulation$x, subset = simulation$random_order <= 1000)
+  result <- coef(reg)[2]
+  cauchy_1 <- rbind(cauchy_1 , result)
+  
+  reg <- lm(simulation$yc ~ simulation$x, subset = simulation$random_order <= 10000)
+  result <- coef(reg)[2]
+  cauchy_10 <- rbind(cauchy_10 , result)
+  
+
+  
+   reg <- lm(simulation$yn ~ simulation$x, subset = simulation$random_order <= 10)
+  result <- coef(reg)[2]
+  normal_001 <- rbind(normal_001 , result)
+
+  reg <- lm(simulation$yn ~ simulation$x, subset = simulation$random_order <= 100)
+  result <- coef(reg)[2]
+  normal_01 <- rbind(normal_01 , result)
+  
+  reg <- lm(simulation$yn ~ simulation$x, subset = simulation$random_order <= 1000)
+  result <- coef(reg)[2]
+  normal_1 <- rbind(normal_1 , result)
+  
+  reg <- lm(simulation$yn ~ simulation$x, subset = simulation$random_order <= 10000)
+  result <- coef(reg)[2]
+  normal_10 <- rbind(normal_10 , result)
+  
+
+  constant <- rbind(constant, 1)
+ 
+  
+
+}
+  colnames(cauchy_001) <- "cauchy_001"
+  colnames(cauchy_01) <- "cauchy_01"
+  colnames(cauchy_1) <- "cauchy_1"
+  colnames(cauchy_10) <- "cauchy_10"
+
+  colnames(normal_001) <- "normal_001"
+  colnames(normal_01) <- "normal_01"
+  colnames(normal_1) <- "normal_1"
+  colnames(normal_10) <- "normal_10"
+
+   colnames(constant)  <- "constant"
+  
+results <- data.frame(cauchy_001, cauchy_01, cauchy_1, cauchy_10, normal_001, normal_01, normal_1, normal_10,  constant)
+result_mean <- aggregate(results, FUN = mean, by = list(results$constant))
+result_sd <- aggregate(results, FUN = sd, by = list(results$constant))
+
+stats <- rbind(result_mean, result_sd)
+
+```
+
+Average point estimates of slope and intercept under different error distributions 
+
+```{r kable, results = "asis"}
+
+
+library(knitr)
+library(kableExtra)
+stats1<-stats[,2:9]
+kable(stats1,format="html") %>%
+  kable_styling(full_width=F)
+```
+
+## Slide with Plot
+
+```{r pressure}
+plot(pressure)
+```
+
