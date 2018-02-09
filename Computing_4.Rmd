@@ -141,13 +141,13 @@ for (i in seq(1000)){
 ```
 #Cauchy
 ```{r}
-ggplot()+ geom_line(aes(number, cauchy_alt ))
+ggplot()+ geom_line(aes(number, cauchy_alt )) + geom_hline(aes(yintercept = cauchy_alt[i])) + xlab("Sample Size") +ylab("Beta Hat (cauchy)")
 ```
 
 
 #Normal
 ```{r}
-ggplot()+ geom_line(aes(number, normal_alt ))
+ggplot()+ geom_line(aes(number, normal_alt )) + geom_hline(aes(yintercept = normal_alt[i])) + xlab("Sample Size") +ylab("Beta Hat (normal)")
 ```
 
 #results table
