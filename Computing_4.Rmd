@@ -150,7 +150,7 @@ ggplot()+ geom_line(aes(number, cauchy_alt ))
 ggplot()+ geom_line(aes(number, normal_alt ))
 ```
 
-##results table
+#results table
 
 ```{r results = "asis", echo=TRUE}
 
@@ -161,9 +161,4 @@ kable(stats,format="html", caption="Average point estimates of slope and interce
   kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
-## Slide with Plot
-
-```{r pressure}
-plot(pressure)
-```
 
