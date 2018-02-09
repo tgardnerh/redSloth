@@ -13,11 +13,11 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Augustin-Louis Cauchy
 
-```{r  include = FALSE, cache=TRUE}
+```{r  include = FALSE, cache=FALSE}
 rm(list=ls())
 #library(broom)
 #library(dplyr)
-#library(tidyverse)
+library(tidyverse)
 #library(magrittr)
 
 
@@ -55,7 +55,8 @@ simulation <- data.frame(x,yn,yc,en,ec)
   constant <- cbind()
 
   
-  for (i in seq(100)){
+  for (i in seq(10000)){
+
     
       simulation$random_order <- order(runif(n= n))
 
@@ -116,10 +117,40 @@ result_mean <- aggregate(results, FUN = mean, by = list(results$constant))
 result_sd <- aggregate(results, FUN = sd, by = list(results$constant))
 
 stats <- rbind(result_mean, result_sd)
-
 ```
 
-##results table
+```{r  include=  FALSE, cache=TRUE}
+
+#Alternate approach
+cauchy_alt <- cbind()
+normal_alt <- cbind()
+number <- cbind()
+
+for (i in seq(1000)){
+  
+  reg <- lm(simulation$yc ~ simulation$x, subset = simulation$random_order <= i)
+  cauchy_alt <- rbind(cauchy_alt,coef(reg)[2])
+  
+  reg <- lm(simulation$yn ~ simulation$x, subset = simulation$random_order <= i)
+  normal_alt <- rbind(normal_alt,coef(reg)[2])
+  
+  number <-rbind(number, i)
+  
+  alt_results <- data.frame(cauchy_alt, normal_alt, number)
+}
+```
+#Cauchy
+```{r}
+ggplot()+ geom_line(aes(number, cauchy_alt )) + geom_hline(aes(yintercept = cauchy_alt[i])) + xlab("Sample Size") +ylab("Beta Hat (cauchy)")
+```
+
+
+#Normal
+```{r}
+ggplot()+ geom_line(aes(number, normal_alt )) + geom_hline(aes(yintercept = normal_alt[i])) + xlab("Sample Size") +ylab("Beta Hat (normal)")
+```
+
+#results table
 
 ```{r results = "asis", echo=TRUE}
 
@@ -130,9 +161,4 @@ kable(stats,format="html", caption="Average point estimates of slope and interce
   kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
-## Slide with Plot
-
-```{r pressure}
-plot(pressure)
-```
 
