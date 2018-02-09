@@ -2,7 +2,7 @@
 title: "Computing 4"
 author: "Hoppenfeld"
 date: "2/8/2018"
-output: beamer_presentation
+output: slidy_presentation
 ---
 
 ```{r setup, include=FALSE}
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ## Augustin-Louis Cauchy
 
-```{r  echo = FALSE, cache=TRUE}
+```{r  include = FALSE, cache=TRUE}
 rm(list=ls())
 #library(broom)
 #library(dplyr)
@@ -55,7 +55,7 @@ simulation <- data.frame(x,yn,yc,en,ec)
   constant <- cbind()
 
   
-  for (i in seq(1000)){
+  for (i in seq(100)){
     
       simulation$random_order <- order(runif(n= n))
 
@@ -147,11 +147,15 @@ plot(number, cauchy_alt )
 plot(number, normal_alt )
 ```
 
-```{r results = "asis", echo=FALSE}
-library(stargazer)
+##results table
 
-stargazer(stats,header=FALSE, summary = FALSE)
+```{r results = "asis", echo=TRUE}
 
+
+library(knitr)
+library(kableExtra)
+kable(stats,format="html", caption="Average point estimates of slope and intercept") %>%
+  kable_styling(bootstrap_options = "striped", full_width = F)
 ```
 
 ## Slide with Plot
