@@ -57,7 +57,7 @@ colVars <- function(x, na.rm=FALSE, dims=1, unbiased=TRUE, SumSquares=FALSE,
 ```
 
 ```{r Build_Simulations, include = FALSE}
-betas<- c(0, .16, .24, .50)+
+betas<- c(0, .16, .24, .50)
 simluation_sizes <- c(50, 100, 150, 200)
 
 results_table <- c()
@@ -88,28 +88,47 @@ results_table
 
 ## Esimator bias
 
-```{r, echo = FALSE}
-install.packages("kable")
-library(kable)
+```{r echo = FALSE}
+install.packages("kableExtra")
+library(kableExtra)
 bias <- as.data.frame(results_table)
 bias <- bias[bias[,1]!=0.00,]
-bias$`x[, 2]`<-NULL
-bias[3] <- bias[3] -0.2
-
-bias[5] <- bias[5] -0.2
+bias$`long alpha bias` <- bias[3] -0.2
 
 
+bias$`short alpha bias` <- bias$`short alpha` -0.2
 
-kable(bias)
+bias$`everyday alpha bias` <- bias$`everyday alpha` -0.2
+
+bias <- cbind(bias$V1,bias$V2,bias$`long alpha bias`, bias$`short alpha bias`,bias$`everyday alpha bias`)
+colnames(bias)<-cbind("Beta2", "N", "Long alpha bias", "Short alpha bias", "Everyday alpha bias")
+odd <- seq(1,23,2)
+bias <- bias[odd,]
+
 ```
--We can see that the estimators are absolutely FUCKED.
 
-## Slide with Plot
+```{r echo= TRUE}
+kable(bias,row.names=FALSE) 
+```
+-We can see that the bias of the restricted estimator increases as the size of beta_2 in our DGP increases--in other words, our estimate of alpha is picking up some of the effect of beta_2, since x_1 and x_2 are strongly correlated.
+
+## Confidence intervals
 
 ```{r, echo=FALSE}
+ci <- as.data.frame(results_table)
+
+ci <- cbind(ci$V1,ci$V2,ci$`long alpha in CI`,ci$`short alpha in CI`,ci$`everday in CI`)
+colnames(ci)<-cbind("Beta2", "N", "Long alpha in CI", "Short alpha in CI", "Everyday alpha in CI")
+
+odd <- seq(1,31,2)
+ci <- ci[odd,]
 
 ```
--Comment
+
+```{r echo= TRUE}
+kable(ci,row.names=FALSE) 
+```
+-This shows the same distortion of the estimator for alpha that we saw in the previous slide.
 
 ## Density of standardized distributions
 
