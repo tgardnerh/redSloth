@@ -39,7 +39,8 @@ simulate_regs <- function(beta, n){
   }
   
   return_vector <- c(coef(longreg)[2], coef(longreg)[3], 0.2>confint(longreg)[2,1] & 0.2<confint(longreg)[2,2], coef(shortreg)[2], 0.2>confint(shortreg)[2,1] & 0.2<confint(shortreg)[2,2], spec, alpha, t_stat, inCI)
-  return_vector
+  names(return_vector) <- c("long alpha","long beta", "long alpha in CI", "short alpha" , "short alpha in CI", "Specification", "everyday alpha", "everyday t", "everday in CI" )
+  colnames(return_vector)
   return(return_vector)
 }
 
