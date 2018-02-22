@@ -62,17 +62,17 @@ colVars <- function(x, na.rm=FALSE, dims=1, unbiased=TRUE, SumSquares=FALSE,
 ```{r Build_Simulations , include = TRUE}
 results_table <- c()
 raw_results <- c()
-#betas<- c(0, .16, .24, .50)
+betas<- c(0, .16, .24, .50)
 
 
 
 
 
 # include = FALSE
-simulation_sizes <- c(50,200)
+simulation_sizes <- c(50,100, 150, 200)
 #50, 100, 150, 
 
-for (beta_coef in c(0, .16, .24, .50)) {
+for (beta_coef in betas) {
   for (size in simulation_sizes){
     sim_results <- c()
     for (i in seq(20)) {
@@ -110,6 +110,54 @@ kable(Q2)
 
 - With $\beta = 0$, the restriction is true. Since the everyday OLS introduces false negatives, the short regression estimator is more efficient than the everyday OLS.
 
+
+
+
+## Esimator bias
+
+```{r  echo = FALSE}
+library(kableExtra)
+bias <- as.data.frame(results_table)
+bias <- bias[bias[,1]!=0.00,]
+bias$`long alpha bias` <- bias[3] -0.2
+
+
+bias$`short alpha bias` <- bias$`short alpha` -0.2
+
+bias$`everyday alpha bias` <- bias$`everyday alpha` -0.2
+
+bias <- cbind(bias$V1,bias$V2,bias$`long alpha bias`, bias$`short alpha bias`,bias$`everyday alpha bias`)
+colnames(bias)<-cbind("Beta2", "N", "Long alpha bias", "Short alpha bias", "Everyday alpha bias")
+odd <- seq(1,23,2)
+bias <- bias[odd,]
+
+```
+
+```{r echo= TRUE}
+kable(bias,row.names=FALSE) 
+```
+-We can see that the bias of the restricted estimator increases as the size of beta_2 in our DGP increases--in other words, our estimate of alpha is picking up some of the effect of beta_2, since x_1 and x_2 are strongly correlated.
+
+## Confidence intervals
+
+```{r, echo=FALSE}
+ci <- as.data.frame(results_table)
+
+ci <- cbind(ci$beta,ci$n,ci$`long alpha in CI`,ci$`short alpha in CI`,ci$`everday in CI`)
+#colnames(ci)<-cbind("Beta2", "N", "Long alpha in CI", "Short alpha in CI", "Everyday alpha in CI")
+
+odd <- seq(1,31,2)
+ci <- ci[odd,]
+
+```
+
+```{r echo= TRUE}
+kable(ci,row.names=FALSE) 
+```
+-This shows the same distortion of the estimator for alpha that we saw in the previous slide.
+
+## Density of standardized distributions
+
 ## Alpha Densities
 ```{r setup variances, include=FALSE}
 raw_data <-as.data.frame(raw_results)
@@ -119,28 +167,11 @@ raw_data$`adjusted long alpha`  <- (raw_data$n)^(.5)*(raw_data$`long alpha` - .2
 ```
 
 
-```{r, include= TRUE , echo=False}
+```{r, include= TRUE , echo=FALSE}
 ggplot(raw_data ) + geom_density(aes(raw_data$`adjusted short alpha`, color = "Restricted")) +geom_density(aes(raw_data$`adjusted long alpha`, color = "Unrestricted")) + facet_grid(raw_data$n~raw_data$beta)
 ```
 
 ###The restricted specificiation is biased upwards
 
 
-## Slide with Bullets
-
-- Bullet 1
-- Bullet 2
-- Bullet 3
-
-## Slide with R Output
-
-```{r cars, echo = TRUE}
-summary(cars)
-```
-
-## Slide with Plot
-
-```{r pressure}
-plot(pressure)
-```
-
+##All estimators together
