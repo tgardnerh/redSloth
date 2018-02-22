@@ -7,8 +7,10 @@ output: beamer_presentation
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+rm(list=ls())
 library(broom)
 library(MASS)
+library(tidyverse)
 ```
 
 
@@ -16,13 +18,13 @@ library(MASS)
 ```{r definefxns, include = FALSE}
 
 simulate_regs <- function(beta, n){
-  x <- mvrnorm (n, c(0,0), rbind(c(1,.7), c(.7,1)))
+   x <- mvrnorm (n, c(0,0), rbind(c(1,.7), c(.7,1)))
   e <- rnorm(n, 0,1)
-  y <- .2 * x[,1] + beta*x[,2] + e
+  y <- .2 * x[,1] +  e  + beta*x[,2] 
   
   longreg <-lm(formula = y ~ x[, 1] + x[, 2])
   shortreg <-lm(formula = y ~ x[, 1])
-  
+
   #pick regression:
    if (.05 > tidy(longreg)$p.value[3] ) {
      spec <- 1
@@ -40,7 +42,6 @@ simulate_regs <- function(beta, n){
   
   return_vector <- c(coef(longreg)[2], coef(longreg)[3], 0.2>confint(longreg)[2,1] & 0.2<confint(longreg)[2,2], coef(shortreg)[2], 0.2>confint(shortreg)[2,1] & 0.2<confint(shortreg)[2,2], spec, alpha, t_stat, inCI)
   names(return_vector) <- c("long alpha","long beta", "long alpha in CI", "short alpha" , "short alpha in CI", "Specification", "everyday alpha", "everyday t", "everday in CI" )
-  colnames(return_vector)
   return(return_vector)
 }
 
@@ -56,26 +57,52 @@ colVars <- function(x, na.rm=FALSE, dims=1, unbiased=TRUE, SumSquares=FALSE,
 }
 ```
 
-```{r Build_Simulations, include = FALSE}
-betas<- c(0, .16, .24, .50)
-simluation_sizes <- c(50, 100, 150, 200)
 
+
+```{r Build_Simulations , include = TRUE}
 results_table <- c()
-for (beta in betas) {
-  for (size in simluation_sizes){
+raw_results <- c()
+#betas<- c(0, .16, .24, .50)
+
+
+
+
+
+# include = FALSE
+simulation_sizes <- c(50,200)
+#50, 100, 150, 
+
+for (beta_coef in c(0, .16, .24, .50)) {
+  for (size in simulation_sizes){
     sim_results <- c()
-    for (i in seq(200)) {
-      sim_results <- rbind( sim_results, simulate_regs(beta, size))
+    for (i in seq(20)) {
+      simulation <- simulate_regs(beta_coef, size)
+      sim_results <- rbind( sim_results, simulation )
+      raw_results <- rbind(raw_results, c(beta_coef , size, simulation ))
     }
-    results_table <- rbind(results_table, c(beta , size, colMeans(sim_results)))
-    results_table <- rbind(results_table, c(beta , size, colVars(sim_results)))
+    results_table <- rbind(results_table, c(beta_coef , size, colMeans(sim_results)))
+    results_table <- rbind(results_table, c(beta_coef , size, colVars(sim_results)))
+    colnames(raw_results)[1] <- "beta"
+    colnames(raw_results)[2] <- "n"
   }
   
 }
-results_table
 ```
 
-## Slide for 
+## Alpha Densities
+```{r setup variances, include=FALSE}
+raw_data <-as.data.frame(raw_results)
+raw_data$`adjusted short alpha` <- (raw_data$n)^(.5)*(raw_data$`short alpha` - .2)
+raw_data$`adjusted long alpha`  <- (raw_data$n)^(.5)*(raw_data$`long alpha` - .2)
+
+```
+
+
+```{r, include= TRUE , echo=False}
+ggplot(raw_data ) + geom_density(aes(raw_data$`adjusted short alpha`, color = "Restricted")) +geom_density(aes(raw_data$`adjusted long alpha`, color = "Unrestricted")) + facet_grid(raw_data$n~raw_data$beta)
+```
+
+###The restricted specificiation is biased upwards
 
 ## Slide with Bullets
 
