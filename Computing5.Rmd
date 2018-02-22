@@ -75,7 +75,25 @@ for (beta in betas) {
 results_table
 ```
 
-## Slide for 
+## Preliminary Questions
+- $P(\hat{\beta} \neq 0) = 0.05$ for any n
+- When $\beta = 0$, the post-test estimator will not be consistent
+- When $\beta \neq 0$, the post-test estimator will be consistent
+- With uncertainty about $\beta$, the post-test estimator is not consistent
+- Similarly, $\hat{\alpha}$ is not consistent, but...
+
+## For $\beta = 0$, the restricted model has the lowest variance
+```{r Question 2, include = FALSE}
+library(knitr)
+Q2 <- results_table[c(2,4,6,8), c(3,6,9)]
+rownames(Q2) <- c("n = 50", "n = 100", "n = 150", "n = 200")
+```
+
+```{r Question 2 Output}
+kable(Q2)
+```
+
+- With $\beta = 0$, the restriction is true. Since the everyday OLS introduces false negatives, the short regression estimator is more efficient than the everyday OLS.
 
 ## Slide with Bullets
 
