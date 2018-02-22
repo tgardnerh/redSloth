@@ -56,7 +56,7 @@ colVars <- function(x, na.rm=FALSE, dims=1, unbiased=TRUE, SumSquares=FALSE,
 ```
 
 ```{r Build_Simulations, include = FALSE}
-betas<- c(0, .16, .24, .50)
+betas<- c(0, .16, .24, .50)+
 simluation_sizes <- c(50, 100, 150, 200)
 
 results_table <- c()
@@ -74,23 +74,42 @@ for (beta in betas) {
 results_table
 ```
 
-## Slide for 
+## Output summary table slide
+```{r echo = FALSE}
 
+
+```
 ## Slide with Bullets
 
 - Bullet 1
 - Bullet 2
 - Bullet 3
 
-## Slide with R Output
+## Esimator bias
 
-```{r cars, echo = TRUE}
-summary(cars)
+```{r, echo = FALSE}
+install.packages("kable")
+library(kable)
+bias <- as.data.frame(results_table)
+bias <- bias[bias[,1]!=0.00,]
+bias$`x[, 2]`<-NULL
+bias[3] <- bias[3] -0.2
+
+bias[5] <- bias[5] -0.2
+
+
+
+kable(bias)
 ```
+-We can see that the estimators are absolutely FUCKED.
 
 ## Slide with Plot
 
-```{r pressure}
-plot(pressure)
-```
+```{r, echo=FALSE}
 
+```
+-Comment
+
+## Density of standardized distributions
+
+##All estimators together
