@@ -69,7 +69,7 @@ simulation_sizes <- c(50,100, 150, 200)
 for (beta_coef in betas) {
   for (size in simulation_sizes){
     sim_results <- c()
-    for (i in seq(200)) {
+    for (i in seq(2000)) {
       simulation <- simulate_regs(beta_coef, size)
       sim_results <- rbind( sim_results, simulation )
       raw_results <- rbind(raw_results, c(beta_coef , size, simulation ))
@@ -84,14 +84,14 @@ for (beta_coef in betas) {
 ```
 
 
-## Preliminary Questions
+# Preliminary Questions
 - $P(\hat{\beta} \neq 0) = 0.05$ for any n
 - When $\beta = 0$, the post-test estimator will not be consistent
 - When $\beta \neq 0$, the post-test estimator will be consistent
 - With uncertainty about $\beta$, the post-test estimator is not consistent
 - Similarly, $\hat{\alpha}$ is not consistent, but...
 
-## For $\beta = 0$, the restricted model has the lowest variance
+# For $\beta = 0$, the restricted model has the lowest variance
 ```{r Question 2, include = FALSE}
 library(knitr)
 Q2 <- results_table[c(2,4,6,8), c(3,6,9)]
@@ -107,7 +107,7 @@ kable(Q2)
 
 
 
-## Estimator bias
+# Estimator bias
 
 ```{r  echo = FALSE}
 library(kableExtra)
@@ -133,7 +133,7 @@ kable(bias,row.names=FALSE, "latex") %>%
 ```
 
 
-## Confidence intervals
+# Confidence intervals
 
 ```{r, echo=FALSE}
 ci <- as.data.frame(results_table)
@@ -152,9 +152,8 @@ kable(ci,row.names=FALSE,"latex") %>%
 ```
 
 
-## Density of standardized distributions
+# Density of standardized distributions
 
-## Alpha Densities
 ```{r setup variances, include=FALSE}
 raw_data <-as.data.frame(raw_results)
 raw_data$`adjusted short alpha` <- (raw_data$n)^(.5)*(raw_data$`short alpha` - .2)
@@ -173,13 +172,14 @@ test_statistics <- test_statistics[odd]
 ggplot(data = raw_data) + 
   geom_density(aes(`adjusted short alpha`, color = "Restricted")) +
   geom_density(aes(`adjusted long alpha`, color = "Unrestricted")) +
-  facet_grid(n~beta) 
+  facet_grid(n~beta)  +
+  xlab("Alpha Error")
 
  
 
 ```
 
-###The restricted specificiation is biased upwards
+The restricted specificiation is biased upwards
 
 
 #All estimators together:
@@ -189,7 +189,8 @@ ggplot(data = raw_data) +
   geom_density(aes(`adjusted long alpha`, color = "Unrestricted")) +
   geom_density(aes(`adjusted everyday alpha`, color = "Everyday")) +
   facet_grid(n~beta) +
-  annotate("text",label= test_statistics, x=-2, y=0.4)
+  annotate("text",label= test_statistics, x=-2, y=0.4) +
+  xlab("Alpha Error")
 
  
 
