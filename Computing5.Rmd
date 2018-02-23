@@ -157,15 +157,39 @@ kable(ci,row.names=FALSE)
 raw_data <-as.data.frame(raw_results)
 raw_data$`adjusted short alpha` <- (raw_data$n)^(.5)*(raw_data$`short alpha` - .2)
 raw_data$`adjusted long alpha`  <- (raw_data$n)^(.5)*(raw_data$`long alpha` - .2)
+raw_data$`adjusted everyday alpha`  <- (raw_data$n)^(.5)*(raw_data$`everyday alpha` - .2)
 
+#T Test values
+test_statistics <- as.data.frame(results_table)
+test_statistics <- test_statistics$Specification
+odd <- c(seq(1, 31, 8), seq(3, 31, 8), seq(5, 31, 8), seq(7, 31, 8))
+test_statistics <- test_statistics[odd]
 ```
 
 
 ```{r, include= TRUE , echo=FALSE}
-ggplot(raw_data ) + geom_density(aes(raw_data$`adjusted short alpha`, color = "Restricted")) +geom_density(aes(raw_data$`adjusted long alpha`, color = "Unrestricted")) + facet_grid(raw_data$n~raw_data$beta)
+ggplot(data = raw_data) + 
+  geom_density(aes(`adjusted short alpha`, color = "Restricted")) +
+  geom_density(aes(`adjusted long alpha`, color = "Unrestricted")) +
+  facet_grid(n~beta) 
+
+ 
+
 ```
 
 ###The restricted specificiation is biased upwards
 
 
-##All estimators together
+#All estimators together:
+```{r, include= TRUE , echo=FALSE}
+ggplot(data = raw_data) + 
+  geom_density(aes(`adjusted short alpha`, color = "Restricted")) +
+  geom_density(aes(`adjusted long alpha`, color = "Unrestricted")) +
+  geom_density(aes(`adjusted everyday alpha`, color = "Everyday")) +
+  facet_grid(n~beta) +
+  annotate("text",label= test_statistics, x=-2, y=0.4)
+
+ 
+
+```
+When the sample sizes is large, or the potentially-omitted variable is highly significant, the everyday approaches the unrestricted specification. 
