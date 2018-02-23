@@ -63,19 +63,13 @@ colVars <- function(x, na.rm=FALSE, dims=1, unbiased=TRUE, SumSquares=FALSE,
 results_table <- c()
 raw_results <- c()
 betas<- c(0, .16, .24, .50)
-
-
-
-
-
-# include = FALSE
 simulation_sizes <- c(50,100, 150, 200)
-#50, 100, 150, 
+
 
 for (beta_coef in betas) {
   for (size in simulation_sizes){
     sim_results <- c()
-    for (i in seq(20)) {
+    for (i in seq(200)) {
       simulation <- simulate_regs(beta_coef, size)
       sim_results <- rbind( sim_results, simulation )
       raw_results <- rbind(raw_results, c(beta_coef , size, simulation ))
