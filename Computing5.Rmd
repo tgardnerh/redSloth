@@ -1,6 +1,6 @@
 ---
 title: "Computing 5"
-author: "Hoppenfeld"
+author: "Hoppenfeld, Mather, Ugo"
 date: "2/21/2018"
 output: beamer_presentation
 ---
