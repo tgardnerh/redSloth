@@ -107,10 +107,11 @@ kable(Q2)
 
 
 
-## Esimator bias
+## Estimator bias
 
 ```{r  echo = FALSE}
 library(kableExtra)
+library(knitr)
 bias <- as.data.frame(results_table)
 bias <- bias[bias[,1]!=0.00,]
 bias$`long alpha bias` <- bias[3] -0.2
@@ -124,31 +125,32 @@ bias <- cbind(bias$V1,bias$V2,bias$`long alpha bias`, bias$`short alpha bias`,bi
 colnames(bias)<-cbind("Beta2", "N", "Long alpha bias", "Short alpha bias", "Everyday alpha bias")
 odd <- seq(1,23,2)
 bias <- bias[odd,]
-
 ```
 
-```{r echo= TRUE}
-kable(bias,row.names=FALSE) 
+```{r estimator bias}
+kable(bias,row.names=FALSE, "latex") %>% 
+  kable_styling(latex_options = "scale_down")
 ```
--We can see that the bias of the restricted estimator increases as the size of beta_2 in our DGP increases--in other words, our estimate of alpha is picking up some of the effect of beta_2, since x_1 and x_2 are strongly correlated.
+
 
 ## Confidence intervals
 
 ```{r, echo=FALSE}
 ci <- as.data.frame(results_table)
 
-ci <- cbind(ci$beta,ci$n,ci$`long alpha in CI`,ci$`short alpha in CI`,ci$`everday in CI`)
-#colnames(ci)<-cbind("Beta2", "N", "Long alpha in CI", "Short alpha in CI", "Everyday alpha in CI")
+ci <- cbind(ci$V1,ci$V2,ci$`long alpha in CI`,ci$`short alpha in CI`,ci$`everday in CI`)
+colnames(ci)<-cbind("Beta2", "N", "Long alpha in CI", "Short alpha in CI", "Everyday alpha in CI")
 
 odd <- seq(1,31,2)
 ci <- ci[odd,]
 
 ```
 
-```{r echo= TRUE}
-kable(ci,row.names=FALSE) 
+```{r confidence intervals}
+kable(ci,row.names=FALSE,"latex") %>% 
+  kable_styling(latex_options = "scale_down")
 ```
--This shows the same distortion of the estimator for alpha that we saw in the previous slide.
+
 
 ## Density of standardized distributions
 
